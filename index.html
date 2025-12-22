@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Free Image Tools – Compress, Resize, Convert Images</title>
+
+<meta name="description" content="Professional free image tools to compress images, resize photos, convert JPG PNG WebP and image to PDF. Fast & secure.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --primary:#2563eb;
+  --bg:#f4f6f8;
+  --card:#ffffff;
+  --text:#0f172a;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,Arial;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* HEADER */
+header{
+  padding:35px 15px 25px;
+  text-align:center;
+}
+header h1{
+  margin:0 0 8px;
+  font-size:clamp(26px,4vw,38px);
+}
+header p{
+  margin:0 auto 18px;
+  max-width:620px;
+  font-size:15px;
+  color:#475569;
+}
+.hero-btns{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.hero-btns a{
+  text-decoration:none;
+  padding:12px 20px;
+  border-radius:8px;
+  font-weight:600;
+}
+.btn-primary{
+  background:var(--primary);
+  color:#fff;
+}
+.btn-outline{
+  border:2px solid var(--primary);
+  color:var(--primary);
+}
+
+/* SECTION */
+section{
+  max-width:1100px;
+  margin:auto;
+  padding:15px;
+}
+h2{
+  margin:10px 0 15px;
+}
+
+/* TOOLS GRID */
+.tools{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:15px;
+}
+.card{
+  background:var(--card);
+  padding:18px;
+  border-radius:14px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+}
+.card h3{margin:8px 0}
+.card p{
+  font-size:14px;
+  color:#475569;
+}
+.card button{
+  margin-top:10px;
+  width:100%;
+  padding:10px;
+  border:none;
+  background:var(--primary);
+  color:#fff;
+  border-radius:8px;
+  font-size:15px;
+  cursor:pointer;
+}
+
+/* TOOL UI */
+input,select{
+  width:100%;
+  padding:9px;
+  margin-top:8px;
+}
+.preview img{
+  max-width:100%;
+  margin-top:10px;
+  border-radius:8px;
+}
+
+/* FOOTER */
+footer{
+  margin-top:30px;
+  padding:20px;
+  background:#0f172a;
+  color:#fff;
+  text-align:center;
+  font-size:14px;
+}
+footer a{color:#93c5fd;text-decoration:none}
+</style>
+</head>
+
+<body>
+
+<!-- HOME -->
+<header>
+  <h1>Free Image Tools Online</h1>
+  <p>Compress images, resize photos, convert JPG PNG WebP, and create PDFs — fast, secure and 100% free.</p>
+  <div class="hero-btns">
+    <a href="#tools" class="btn-primary">Use Tools</a>
+    <a href="#compressor" class="btn-outline">Compress Image</a>
+  </div>
+</header>
+
+<!-- TOOLS -->
+<section id="tools">
+  <h2>🛠 Image Tools</h2>
+  <div class="tools">
+
+<!-- COMPRESSOR -->
+<div class="card" id="compressor">
+<h3>🗜 Image Compressor</h3>
+<p>Reduce image size without losing quality.</p>
+<input type="file" id="cFile" accept="image/*">
+<input type="range" id="quality" value="70">
+<button onclick="compress()">Compress</button>
+<div class="preview">
+<img id="cOut">
+</div>
+<a id="cDownload" download="compressed.jpg"></a>
+</div>
+
+<!-- RESIZER -->
+<div class="card">
+<h3>📐 Image Resizer</h3>
+<p>Resize image by width and height.</p>
+<input type="file" id="rFile" accept="image/*">
+<input type="number" id="w" placeholder="Width">
+<input type="number" id="h" placeholder="Height">
+<button onclick="resizeImg()">Resize</button>
+<img id="rOut">
+</div>
+
+<!-- CONVERTER -->
+<div class="card">
+<h3>🔄 Image Converter</h3>
+<p>Convert JPG, PNG and WebP images.</p>
+<input type="file" id="cvFile" accept="image/*">
+<select id="format">
+<option value="image/jpeg">JPG</option>
+<option value="image/png">PNG</option>
+<option value="image/webp">WebP</option>
+</select>
+<button onclick="convert()">Convert</button>
+<img id="cvOut">
+</div>
+
+<!-- IMAGE TO PDF -->
+<div class="card">
+<h3>📄 Image to PDF</h3>
+<p>Convert multiple images into one PDF.</p>
+<input type="file" id="pFile" multiple accept="image/*">
+<button onclick="toPDF()">Create PDF</button>
+<a id="pDownload" download="images.pdf"></a>
+</div>
+
+  </div>
+</section>
+
+<footer>
+<p>© 2025 Free Image Tools | <a href="#">Privacy</a> | <a href="#">Contact</a></p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+function compress(){
+let f=cFile.files[0]; if(!f)return;
+let img=new Image(),r=new FileReader();
+r.onload=e=>img.src=e.target.result;
+img.onload=()=>{
+let c=document.createElement('canvas');
+c.width=img.width;c.height=img.height;
+c.getContext('2d').drawImage(img,0,0);
+let d=c.toDataURL("image/jpeg",quality.value/100);
+cOut.src=d;cDownload.href=d;
+};
+r.readAsDataURL(f);
+}
+
+function resizeImg(){
+let f=rFile.files[0]; if(!f)return;
+let img=new Image(),r=new FileReader();
+r.onload=e=>img.src=e.target.result;
+img.onload=()=>{
+let c=document.createElement('canvas');
+c.width=w.value;c.height=h.value;
+c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+rOut.src=c.toDataURL("image/jpeg",0.9);
+};
+r.readAsDataURL(f);
+}
+
+function convert(){
+let f=cvFile.files[0]; if(!f)return;
+let img=new Image(),r=new FileReader();
+r.onload=e=>img.src=e.target.result;
+img.onload=()=>{
+let c=document.createElement('canvas');
+c.width=img.width;c.height=img.height;
+c.getContext('2d').drawImage(img,0,0);
+cvOut.src=c.toDataURL(format.value,0.9);
+};
+r.readAsDataURL(f);
+}
+
+function toPDF(){
+const {jsPDF}=window.jspdf;
+let pdf=new jsPDF(),files=pFile.files,i=0;
+function add(){
+let img=new Image(),r=new FileReader();
+r.onload=e=>img.src=e.target.result;
+img.onload=()=>{
+let w=pdf.internal.pageSize.getWidth();
+let h=(img.height*w)/img.width;
+pdf.addImage(img,'JPEG',0,0,w,h);
+i++; if(i<files.length){pdf.addPage();add();}
+else pDownload.href=pdf.output('bloburl');
+};
+r.readAsDataURL(files[i]);
+}
+if(files.length)add();
+}
+</script>
+
+</body>
+</html>
